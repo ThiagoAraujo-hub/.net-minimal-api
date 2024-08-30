@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using TodoMinimalApi;
 
@@ -8,12 +9,26 @@ var app = builder.Build();
 
 RouteGroupBuilder todoItems = app.MapGroup("/todoitems");
 
-todoItems.MapGet("/", GetAllTodos);
-todoItems.MapGet("/complete", GetCompleteTodos);
-todoItems.MapGet("/{id}", GetTodo);
-todoItems.MapPost("/", CreateTodo);
-todoItems.MapPut("/{id}", UpdateTodo);
-todoItems.MapDelete("/{id}", DeleteTodo);
+todoItems.MapGet("/", GetAllTodos)
+    .Produces<Ok<IList<Todo>>>();
+
+todoItems.MapGet("/complete", GetCompleteTodos)
+    .Produces<Ok<IList<Todo>>>();
+
+todoItems.MapGet("/{id}", GetTodo)
+    .Produces<Ok<Todo>>()
+    .Produces<NotFound>();
+
+todoItems.MapPost("/", CreateTodo)
+    .Produces<Created>();
+
+todoItems.MapPut("/{id}", UpdateTodo)
+    .Produces<NoContent>();
+
+todoItems.MapDelete("/{id}", DeleteTodo)
+    .Produces<NoContent>()
+    .Produces<NotFound>();
+
 
 app.Run();
 
